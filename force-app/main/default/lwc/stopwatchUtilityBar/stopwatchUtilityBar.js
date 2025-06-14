@@ -1,53 +1,83 @@
 import { LightningElement } from 'lwc';
 
 export default class StopWatch extends LightningElement {
+    timer = '00:00:00';
+    timerRef;
+    startTime = null; // actual timestamp when the timer started (minus elapsed)
+    elapsed = 0;      // elapsed time in milliseconds
 
-    timer = '00:00:00'
-    timerRef 
-    
-    actionHandler(event){
-        const {label} = event.target
-        if(label === 'Start'){
-            this.setTimer() 
+    actionHandler(event) {
+        const { label } = event.target;
+
+        if (label === 'Start') {
+            this.startTimer();
         }
-        if(label === 'Stop'){
-            window.clearInterval(this.timerRef)
-            window.localStorage.removeItem('startTimer') 
+
+        if (label === 'Stop') {
+            this.stopTimer();
         }
-        if(label === 'Reset'){
-            this.timer='00:00:00'
-            window.clearInterval(this.timerRef) 
-            window.localStorage.removeItem('startTimer') 
+
+        if (label === 'Reset') {
+            this.resetTimer();
         }
-        
     }
 
-    StartTimerHandler(){
-        const startTime = new Date() 
-        window.localStorage.setItem('startTimer', startTime)
-        return startTime
-    }
-    
-    setTimer(){
-        const startTime = new Date( window.localStorage.getItem("startTimer") || this.StartTimerHandler())
-        this.timerRef = window.setInterval(()=>{
-            const secsDiff = new Date().getTime() - startTime.getTime()
-            this.timer = this.secondToHms(Math.floor(secsDiff/1000))
-        }, 1000)
+    startTimer() {
+        if (this.timerRef) return; // Avoid starting multiple intervals
+
+        // Resume from elapsed if paused, or set new start time
+        const now = Date.now();
+        this.startTime = now - this.elapsed;
+
+        this.timerRef = setInterval(() => {
+            this.elapsed = Date.now() - this.startTime;
+            this.timer = this.secondToHms(Math.floor(this.elapsed / 1000));
+        }, 1000);
+
+        // Persist start and elapsed
+        window.localStorage.setItem('startTime', this.startTime);
+        window.localStorage.setItem('elapsed', this.elapsed);
     }
 
-secondToHms(d) {
-    d = Number(d);
-    const h = String(Math.floor(d / 3600)).padStart(2, '0');
-    const m = String(Math.floor((d % 3600) / 60)).padStart(2, '0');
-    const s = String(Math.floor(d % 60)).padStart(2, '0');
-    return `${h}:${m}:${s}`;
-}
+    stopTimer() {
+        clearInterval(this.timerRef);
+        this.timerRef = null;
 
-    // What does this do?
-    connectedCallback(){
-        if(window.localStorage.getItem("startTimer")){
-            this.setTimer()
+        // Persist elapsed
+        window.localStorage.setItem('elapsed', this.elapsed);
+    }
+
+    resetTimer() {
+        clearInterval(this.timerRef);
+        this.timerRef = null;
+
+        this.elapsed = 0;
+        this.timer = '00:00:00';
+        this.startTime = null;
+
+        // Clear storage
+        window.localStorage.removeItem('startTime');
+        window.localStorage.removeItem('elapsed');
+    }
+
+    secondToHms(d) {
+        d = Number(d);
+        const h = String(Math.floor(d / 3600)).padStart(2, '0');
+        const m = String(Math.floor((d % 3600) / 60)).padStart(2, '0');
+        const s = String(Math.floor(d % 60)).padStart(2, '0');
+        return `${h}:${m}:${s}`;
+    }
+
+    connectedCallback() {
+        const storedStart = window.localStorage.getItem("startTime");
+        const storedElapsed = window.localStorage.getItem("elapsed");
+
+        if (storedStart && storedElapsed) {
+            this.startTime = parseInt(storedStart, 10);
+            this.elapsed = parseInt(storedElapsed, 10);
+
+            // Resume timer only if it was running before (optional logic)
+            this.timer = this.secondToHms(Math.floor(this.elapsed / 1000));
         }
     }
 }
