@@ -1,0 +1,12 @@
+<template>
+    <div class="slds-card slds-p-around_medium">
+        <div class="timer" style="text-align: center; font-size: 2rem;">{timer}</div>
+        <div class="slds-p-around_medium" style="text-align: center;">
+            <lightning-button-group>
+                <lightning-button variant="success" label="Start" onclick={actionHandler}></lightning-button>
+                <lightning-button variant="destructive" label="Stop" onclick={actionHandler}></lightning-button>
+                <lightning-button variant="brand" label="Reset" onclick={actionHandler}></lightning-button>
+            </lightning-button-group>
+        </div>
+    </div>
+</template>
