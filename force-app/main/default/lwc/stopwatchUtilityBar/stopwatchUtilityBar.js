@@ -3,27 +3,27 @@ import { LightningElement } from 'lwc';
 export default class StopWatch extends LightningElement {
 
     timer = '00:00:00'
-    timerRef
-    isRunning = false
+    timerRef 
     
     actionHandler(event){
         const {label} = event.target
         if(label === 'Start'){
-            this.setTimer()
+            this.setTimer() 
         }
         if(label === 'Stop'){
             window.clearInterval(this.timerRef)
-            window.localStorage.removeItem('startTimer')
+            window.localStorage.removeItem('startTimer') 
         }
         if(label === 'Reset'){
             this.timer='00:00:00'
-            window.clearInterval(this.timerRef)
-            window.localStorage.removeItem('startTimer')
+            window.clearInterval(this.timerRef) 
+            window.localStorage.removeItem('startTimer') 
         }
         
     }
+
     StartTimerHandler(){
-        const startTime = new Date()
+        const startTime = new Date() 
         window.localStorage.setItem('startTimer', startTime)
         return startTime
     }
@@ -44,6 +44,7 @@ secondToHms(d) {
     return `${h}:${m}:${s}`;
 }
 
+    // What does this do?
     connectedCallback(){
         if(window.localStorage.getItem("startTimer")){
             this.setTimer()
