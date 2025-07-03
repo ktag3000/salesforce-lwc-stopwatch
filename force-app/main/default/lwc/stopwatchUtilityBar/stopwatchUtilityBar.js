@@ -2,6 +2,7 @@ import { LightningElement } from 'lwc';
 
 export default class StopWatch extends LightningElement {
     timer = '00:00:00';
+    hoursDecimal = '0.00';
     timerRef;
     startTime = null; // actual timestamp when the timer started (minus elapsed)
     elapsed = 0;      // elapsed time in milliseconds
@@ -31,7 +32,16 @@ export default class StopWatch extends LightningElement {
 
         this.timerRef = setInterval(() => {
             this.elapsed = Date.now() - this.startTime;
+
+            // Running timer
             this.timer = this.secondToHms(Math.floor(this.elapsed / 1000));
+            console.log('this.timer');
+            console.log(this.timer);
+            
+            // Decimal hours
+            this.hoursDecimal = ((this.elapsed / 1000) / 3600).toFixed(2);
+            console.log('this.decimalTimer');
+            console.log(this.hoursDecimal);
         }, 1000);
 
         // Persist start and elapsed
@@ -53,6 +63,7 @@ export default class StopWatch extends LightningElement {
 
         this.elapsed = 0;
         this.timer = '00:00:00';
+        this.hoursDecimal = '0.00';
         this.startTime = null;
 
         // Clear storage

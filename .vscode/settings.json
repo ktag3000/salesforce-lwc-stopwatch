@@ -5,5 +5,9 @@
     "**/.sfdx": true
   },
   "salesforcedx-vscode-core.show-cli-success-msg": false,
-  "workbench.colorCustomizations": {}
+  "workbench.colorCustomizations": {
+    "tab.activeBorder": "#d19a66",
+    "statusBar.background": "#8c1004",
+    "activityBar.background": "#8c1004"
+  }
 }
