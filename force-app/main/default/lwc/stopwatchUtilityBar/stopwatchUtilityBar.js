@@ -35,13 +35,9 @@ export default class StopWatch extends LightningElement {
 
             // Running timer
             this.timer = this.secondToHms(Math.floor(this.elapsed / 1000));
-            console.log('this.timer');
-            console.log(this.timer);
             
             // Decimal hours
-            this.hoursDecimal = ((this.elapsed / 1000) / 3600).toFixed(2);
-            console.log('this.decimalTimer');
-            console.log(this.hoursDecimal);
+            this.hoursDecimal = (Math.floor(this.elapsed / 1000) / 3600).toFixed(2);
         }, 1000);
 
         // Persist start and elapsed
